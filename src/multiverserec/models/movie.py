@@ -1,26 +1,27 @@
-from typing import List, Optional
+from typing import Optional
 from multiverserec.models.Content import Content
 
-class Movie(Content):
-    def __init__(self, title: str, director: str, description: str, genres: List[str], year: int, rating: Optional[float] = None):
-        super().__init__(title, description, genres, rating)
-        self.director = director
-        self.year = year
+class Movie:
+    @staticmethod
+    def create(title: str, director: str, description: str, genres: list[str], year: int, duration: Optional[int] = None, actors: Optional[list[str]] = None, country: Optional[str] = None, rating: Optional[float] = None, embedding: Optional[list[float]] = None) -> Content:
+        return Content(
+            title=title,
+            description=description,
+            content_type='movie',
+            rating=rating,
+            embedding=embedding,
+            meta={
+                "director": director,
+                "genres": genres,
+                "year": year,
+                "duration": duration,
+                "actors": actors or [],
+                "country": country,
+            }
+        )
+    
+    @staticmethod
+    def find_searchable_text(title: str, director: str, description: str, genres: list[str]) -> str:
+        """Текст, который превращается в вектор"""
+        return f"{title} {director} {description} {' '.join(genres)}"
         
-    def get_searchable_text(self) -> str:
-        return f"{self.title} {self.director} {self.description} {' '.join(self.genres)}"
-    
-    def get_content_type(self) -> str:
-        return "movie"
-    
-    def get_display_name(self) -> str:
-        return f"{self.title} ({self.year})"
-    
-    def get_metadata(self) -> dict:
-        base_metadata = super().get_metadata()
-        base_metadata.update({
-            "director": self.director,
-            "year": self.year
-        })
-        return base_metadata
-    

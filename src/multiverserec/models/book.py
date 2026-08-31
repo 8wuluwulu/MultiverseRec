@@ -1,29 +1,28 @@
-from typing import List, Optional
+from typing import Optional
 from multiverserec.models.Content import Content
 
-class Book(Content):
+class Book:
+    @staticmethod
+    def create(title: str, author: str, description: str, genres: list[str], pages: int, rating: Optional[float] = None, embedding: Optional[list[float]] = None) -> Content:
+        return Content(
+            title = title,
+            description = description,
+            content_type = 'book',
+            rating = rating,
+            embedding = embedding,
+            meta ={
+                "author": author,
+                "genres": genres,
+                "pages": pages,
+            }
+        )
     
-    def __init__(self, title: str, author: str, description: str, genres: List[str], pages: int, rating: Optional[float] = None):
-        super().__init__(title, description, genres, rating)
-        self.author = author
-        self.pages = pages
+    def get_searcheable_text(title: str, author: str, description: str, genres: list[str]) -> str:
+        """Текст, который превращается в вектор"""
+        return f"{title} {author} {description} {' '.join(genres)}"
+
+    
         
-    def get_searchable_text(self) -> str:
-        """Объединяем все текстовые поля для эмбеддинга в один текст"""
-        return f"{self.title} {self.author} {self.description} {' '.join(self.genres)}"
-
-    def get_content_type(self) -> str:
-        return "book"
     
-    def get_display_name(self) -> str:
-        return f"{self.title} by {self.author}"
-
-    def get_metadata(self) -> dict:
-        base_metadata = super().get_metadata()
-        base_metadata.update({
-            "author": self.author,
-            "pages": self.pages,
-        })
-        return base_metadata
         
         
